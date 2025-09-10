@@ -34,4 +34,4 @@ int append_mime(struct mimes_list *mime, char *filepath, const char *mimetype);
 
 struct mimes_list generate_mimelist(char **files);
 
-void prepare_dirs(const char *path);
+int prepare_dirs(const char *path, const char *const dirs[], size_t ndirs);

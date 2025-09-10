@@ -32,7 +32,17 @@ int main(void) {
 
   free_dir(str);
 
-  prepare_dirs(".");
+  static const char *const dirs[] =
+  {
+    "Images",
+    "Videos",
+    "Audio",
+    "Documents",
+    "Archives",
+    "Unknown"
+  };
+
+  prepare_dirs(".", dirs, ARR_LEN(dirs));
   
   return 0;
 }

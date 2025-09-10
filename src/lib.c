@@ -1,12 +1,15 @@
 #include "../include/lib.h"
 
+#include <errno.h>
 #include <dirent.h>
+#include <fcntl.h>
 #include <magic.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 const char *documents[] =
 {
@@ -199,57 +202,21 @@ struct mimes_list generate_mimelist(char **files)
   return mimes;
 }
 
-void prepare_dirs(const char *path) {
-  char *img = "Images";
-  char *vid = "Videos";
-  char *aud = "Audio";
-  char *doc = "Documents";
-  char *arc = "Archives";
-  char *unk = "Unknown";
+int prepare_dirs(const char *path, const char *const dirs[], size_t ndirs)
+{
+  int fd = open(path, O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+  if (fd == -1) return 0;
 
-  size_t img_len = strlen(img);
-  size_t vid_len = strlen(vid);
-  size_t aud_len = strlen(aud);
-  size_t doc_len = strlen(doc);
-  size_t arc_len = strlen(arc);
-  size_t unk_len = strlen(unk);
-  
-  size_t path_len = strlen(path);
+  int error = 1;
 
-  char *image_dir = strdup(path);
-  char *video_dir = strdup(path);
-  char *audio_dir = strdup(path);
-  char *document_dir = strdup(path);
-  char *archive_dir = strdup(path);
-  char *unknown_dir = strdup(path);
+  for (size_t i = 0; i < ndirs; i++)
+  {
+    if (mkdirat(fd, dirs[i], 0755) == -1 && errno != EEXIST)
+    {
+      error = 0;
+    }
+  }
 
-  image_dir = realloc(image_dir, path_len + img_len + 1);
-  video_dir = realloc(video_dir, path_len + vid_len + 1);
-  audio_dir = realloc(audio_dir, path_len + aud_len + 1);
-  document_dir = realloc(document_dir, path_len + doc_len + 1);
-  archive_dir = realloc(archive_dir, path_len + arc_len + 1);
-  unknown_dir = realloc(unknown_dir, path_len + unk_len + 1);
-
-  image_dir[path_len] = '/';
-  video_dir[path_len] = '/';
-  audio_dir[path_len] = '/';
-  document_dir[path_len] = '/';
-  archive_dir[path_len] = '/';
-  unknown_dir[path_len] = '/';
-  
-  memcpy(image_dir + path_len + 1, img, img_len);
-  memcpy(video_dir + path_len + 1, vid, vid_len);
-  memcpy(audio_dir + path_len + 1, aud, aud_len);
-  memcpy(document_dir + path_len + 1, doc, doc_len);
-  memcpy(archive_dir + path_len + 1, arc, arc_len);
-  memcpy(unknown_dir + path_len + 1, unk, unk_len);
-
-  mkdir(image_dir, 0755);
-  mkdir(video_dir, 0755);
-  mkdir(audio_dir, 0755);
-  mkdir(document_dir, 0755);
-  mkdir(archive_dir, 0755);
-  mkdir(unknown_dir, 0755);
-
-  return;
+  close(fd);
+  return error;
 }
