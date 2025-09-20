@@ -49,7 +49,8 @@ const char *archives[] =
   "application/zstd"
 };
 
-enum FileTypes detect_filetype(const char *mime) {
+enum FileTypes detect_filetype(const char *mime)
+{
   if (!mime) return Unknown;
 
   if (has_prefix(mime, "image/")) return Image;
@@ -70,15 +71,19 @@ enum FileTypes detect_filetype(const char *mime) {
   return Unknown;
 }
 
-int has_prefix(const char *string, const char *prefix) {
-  if (!string || !prefix) return -1;
+int has_prefix(const char *string, const char *prefix)
+{
+  if (!string || !prefix) return 0;
 
-  if (strlen(string) < strlen(prefix)) return -1;
+  size_t lp = strlen(prefix);
 
-  return (strcmp(string, prefix));
+  if (strlen(string) < lp) return 0;
+
+  return (strncmp(string, prefix, lp) == 0);
 }
 
-const char *get_mimetype(const char *filepath) {
+const char *get_mimetype(const char *filepath)
+{
   magic_t magic = magic_open(MAGIC_MIME_TYPE | MAGIC_ERROR);
   magic_load(magic, NULL);
 
@@ -97,9 +102,9 @@ const char *get_mimetype(const char *filepath) {
   return out;
 }
 
-const char *get_abs_path(const char *dir, const char *file) {
-  if (!dir || !file)
-    return NULL;
+const char *get_abs_path(const char *dir, const char *file)
+{
+  if (!dir || !file) return NULL;
 
   const size_t dir_len = strlen(dir);
   const size_t file_len = strlen(file);
@@ -108,8 +113,7 @@ const char *get_abs_path(const char *dir, const char *file) {
 
   char *string = malloc(dir_len + file_len + (need_sep ? 2 : 1));
 
-  if (!string)
-    return NULL;
+  if (!string) return NULL;
 
   char *pointer = string;
 
@@ -118,8 +122,7 @@ const char *get_abs_path(const char *dir, const char *file) {
   pointer += dir_len;
 
   // Insert separator if needed
-  if (need_sep)
-    *pointer++ = '/';
+  if (need_sep) *pointer++ = '/';
 
   // Filename
   memcpy(pointer, file, file_len + 1);
@@ -131,7 +134,8 @@ const char *get_abs_path(const char *dir, const char *file) {
   return string;
 }
 
-char **read_dir(const char *path) {
+char **read_dir(const char *path)
+{
   DIR *dir = opendir(path);
   struct dirent *dir_i;
 
@@ -139,7 +143,8 @@ char **read_dir(const char *path) {
 
   int counter = 0;
 
-  while ((dir_i = readdir(dir)) != NULL) {
+  while ((dir_i = readdir(dir)) != NULL)
+  {
     const char *filepath = get_abs_path(path, dir_i->d_name);
 
     char **tmp = realloc(files, (counter + 1) * sizeof(char *));
@@ -156,7 +161,8 @@ char **read_dir(const char *path) {
   return files;
 }
 
-void free_dir(char **string) {
+void free_dir(char **string)
+{
   for (int i = 0; string[i] != NULL; i++)
   {
     free(string[i]);
@@ -167,56 +173,29 @@ void free_dir(char **string) {
   return;
 }
 
-int append_mime(struct mimes_list *mime, char *filepath, const char *mimetype)
-{
-  char *filepath_dup = strdup(filepath);
-  char *mimetype_dup = strdup(mimetype);
-  
-  size_t new_length = mime->length+1;
-
-  char **new_filepaths = realloc(mime->filepaths, new_length * sizeof(*new_filepaths));
-  char **new_mimetypes = realloc(mime->mimetypes, new_length * sizeof(*new_mimetypes));
-
-  mime->filepaths = new_filepaths;
-  mime->mimetypes = new_mimetypes;
-
-  mime->filepaths[mime->length] = filepath_dup;
-  mime->mimetypes[mime->length] = mimetype_dup;
-
-  mime->length = new_length;
-
-  return 1;
-}
-
-struct mimes_list generate_mimelist(char **files)
-{
-  struct mimes_list mimes = {0};
-  char *file;
-
-  for (int i = 0; (file = files[i]) != NULL; i++)
-  {
-    const char *mimetype = get_mimetype(file);
-    append_mime(&mimes, file, mimetype);
-  }
-
-  return mimes;
-}
-
 int prepare_dirs(const char *path, const char *const dirs[], size_t ndirs)
 {
   int fd = open(path, O_RDONLY | O_DIRECTORY | O_CLOEXEC);
-  if (fd == -1) return 0;
+  if (fd == -1) return 1;
 
-  int error = 1;
+  int error = 0;
 
   for (size_t i = 0; i < ndirs; i++)
   {
     if (mkdirat(fd, dirs[i], 0755) == -1 && errno != EEXIST)
     {
-      error = 0;
+      error = 1;
     }
   }
 
   close(fd);
   return error;
+}
+
+int is_file(const char *path)
+{
+  struct stat path_stat;
+  stat(path, &path_stat);
+
+  return S_ISREG(path_stat.st_mode);
 }
