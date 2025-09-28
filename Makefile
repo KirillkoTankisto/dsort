@@ -8,9 +8,9 @@ OUT_DIR = out
 SRC_DIR = src
 BIN_DIR = bin
 
-STRIP = strip --strip-all -R .comment -R .note.gnu.build-id
+COMPILE = $(CC) $(CFLAGS) $(INCLUDE) $(LDFLAGS) $(LDLIBS)
+STRIP = llvm-strip --strip-all -R .comment -R .note.gnu.build-id
 GETSIZE = @du --bytes
-ADD_SECTION = objcopy --add-section .build=$(BIN_DIR)/.build
 
 C_prefix = ":CC: "
 C = @echo -n $(C_prefix)
@@ -20,14 +20,12 @@ all: $(OUT_DIR)/dsort
 clean:
 	rm -rf $(OUT_DIR)
 
-$(OUT_DIR)/dsort: $(SRC_DIR)/main.c $(SRC_DIR)/lib.c
+$(OUT_DIR)/dsort: $(SRC_DIR)/main.c $(SRC_DIR)/lib.c $(SRC_DIR)/config.c
 	$C
 	mkdir -p $(OUT_DIR)
 	$C
-	$(CC) $(CFLAGS) $(INCLUDE) $(LDFLAGS) $(SRC_DIR)/main.c $(SRC_DIR)/lib.c $(LDLIBS) -o $(OUT_DIR)/main
+	$(COMPILE) $^ -o $@
 	$C
-	$(STRIP) $(OUT_DIR)/main
-	$C
-	$(ADD_SECTION) $(OUT_DIR)/main $(OUT_DIR)/dsort
+	$(STRIP) $@
 	$C
 	$(GETSIZE) $@

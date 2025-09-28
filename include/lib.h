@@ -1,11 +1,10 @@
 #include <stddef.h>
+#include "../include/config.h"
 #include "../include/def.h"
 
 enum FileTypes detect_filetype(const char *mime);
 
 const char *get_mimetype(const char *filepath);
-
-int has_prefix(const char *string, const char *prefix);
 
 const char *get_abs_path(const char *dir, const char *file);
 

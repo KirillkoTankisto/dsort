@@ -1,15 +1,53 @@
 #include "../include/lib.h"
 
+#include <getopt.h>
 #include <libgen.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+void help(void)
+{
+  puts(help_message);
+  return;
+}
 
 int main(int argc, char **argv)
 {
-  const char *root = argc > 1 ? argv[1] : ".";
+  int c;
+  while ((c = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1)
+  {
+    // Note: gotos are on the bottom
+    switch (c) {
+      case 'h':
+      case '?':
+        goto help_msg;
+      case 'v':
+        goto version_msg;
+      default:
+        break;
+    }
+  }
+
+  char *root;
+
+  if (optind < argc) root = argv[optind++]; else root = ".";
+
+  if (!strcmp(root, ".")  || !strcmp(root, "..") || !strcmp(root, "/")) {
+    printf("Are you sure that you want to sort this directory? [Y/n] ");
+    fflush(stdout);
+
+    int c = fgetc(stdin);
+
+    switch (c) {
+      case 'Y':
+      case 'y':
+        break;
+      default:
+        return 0;
+    }
+  }
 
   char **files = read_dir(root);
 
@@ -58,4 +96,12 @@ int main(int argc, char **argv)
   free_dir(files);
 
   return 0;
+
+  help_msg:
+    puts(help_message);
+    return 0;
+
+  version_msg:
+    printf(version_message, version);
+    return 0;
 }

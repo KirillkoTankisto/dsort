@@ -49,6 +49,17 @@ const char *archives[] =
   "application/zstd"
 };
 
+int has_prefix(const char *string, const char *prefix)
+{
+  if (!string || !prefix) return 0;
+
+  size_t lp = strlen(prefix);
+
+  if (strlen(string) < lp) return 0;
+
+  return (strncmp(string, prefix, lp) == 0);
+}
+
 enum FileTypes detect_filetype(const char *mime)
 {
   if (!mime) return Unknown;
@@ -69,17 +80,6 @@ enum FileTypes detect_filetype(const char *mime)
   }
 
   return Unknown;
-}
-
-int has_prefix(const char *string, const char *prefix)
-{
-  if (!string || !prefix) return 0;
-
-  size_t lp = strlen(prefix);
-
-  if (strlen(string) < lp) return 0;
-
-  return (strncmp(string, prefix, lp) == 0);
 }
 
 const char *get_mimetype(const char *filepath)
