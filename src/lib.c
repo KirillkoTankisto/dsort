@@ -137,6 +137,8 @@ const char *get_abs_path(const char *dir, const char *file)
 char **read_dir(const char *path)
 {
   DIR *dir = opendir(path);
+  if (!dir) return NULL;
+
   struct dirent *dir_i;
 
   char **files = NULL;
@@ -154,6 +156,8 @@ char **read_dir(const char *path)
 
     counter++;
   }
+
+  closedir(dir);
 
   files = realloc(files, (counter + 1) * sizeof(char *));
   files[counter] = NULL;

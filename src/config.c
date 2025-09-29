@@ -1,5 +1,5 @@
-#include "../include/def.h"
 #include "../include/config.h"
+#include "../include/def.h"
 
 #include <errno.h>
 #include <stdlib.h>

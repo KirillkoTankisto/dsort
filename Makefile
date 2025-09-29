@@ -20,7 +20,7 @@ all: $(OUT_DIR)/dsort
 clean:
 	rm -rf $(OUT_DIR)
 
-$(OUT_DIR)/dsort: $(SRC_DIR)/main.c $(SRC_DIR)/lib.c $(SRC_DIR)/config.c
+$(OUT_DIR)/dsort: $(SRC_DIR)/*.c
 	$C
 	mkdir -p $(OUT_DIR)
 	$C

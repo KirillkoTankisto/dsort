@@ -1,5 +1,4 @@
 #include <stddef.h>
-#include "../include/config.h"
 #include "../include/def.h"
 
 enum FileTypes detect_filetype(const char *mime);

@@ -1,4 +1,5 @@
 static const char *version = "1.0";
+static const char *config_path_default = "/etc/dsort.conf";
 
 #define ARR_LEN(a) (sizeof(a) / sizeof((a)[0]))
 
@@ -32,10 +33,12 @@ static const struct option longopts[] =
 {
   { "help", no_argument, 0, 'h' },
   { "version", no_argument, 0, 'v' },
+  { "daemon", no_argument, 0, 'd' },
+  { "config", required_argument, 0, 'c' },
   { 0, 0, 0, 0 }
 };
 
-static const char *shortopts = "hv";
+static const char *shortopts = "hvdc:";
 
 static const char *help_message =
 "Usage: dsort OPTION... [DIR]\n"
