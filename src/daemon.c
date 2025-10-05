@@ -2,16 +2,18 @@
 #include "../include/daemon.h"
 #include "../include/sort.h"
 
+#include <stdio.h>
 #include <time.h>
 
 int daemon(struct config cfg)
 {
 
+  puts("  Starting daemon...");
   const struct timespec interval = { .tv_sec = cfg.interval };
 
   while (1)
   {
-    sort_dir(cfg.directory);
+    if (sort_dir(cfg.directory)) return 1;
     nanosleep(&interval, NULL);
   }
   

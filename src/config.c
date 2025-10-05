@@ -30,9 +30,7 @@ void append_the_value(int character, FILE *file, char *string, size_t string_siz
     position++;
   }
   string[position + 1] = '\0';
-
-  puts(string);
-
+ 
   return;
 }
 
@@ -86,7 +84,7 @@ struct config parse_config(const char *path)
     free(directory);
     goto exit;
   }
-  
+
   cfg.interval = interval;
   cfg.directory = directory;
 

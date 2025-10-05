@@ -42,14 +42,16 @@ int main(int argc, char **argv)
   
   if (daemon_mode) {
     struct config cfg;
-    if (config_path)
+
+    if (config_path) cfg = parse_config(config_path);
+    else cfg = parse_config(config_path_default);
+
+    if (!cfg.directory || !cfg.interval)
     {
-      cfg = parse_config(config_path);
+      puts("Config is empty or invalid!");
+      return 1;
     }
-    else
-    {
-      cfg = parse_config(config_path_default);
-    }
+    
     return daemon(cfg);
   }
 
