@@ -79,14 +79,14 @@ struct config parse_config(const char *path)
   errno = 0;
   
   int interval = strtol(interval_string, &endptr, 10);
-  
+  free(interval_string);
+
   if (errno != 0)
   {
-    free(interval_string);
     free(directory);
     goto exit;
   }
-
+  
   cfg.interval = interval;
   cfg.directory = directory;
 
