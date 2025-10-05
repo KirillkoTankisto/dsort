@@ -2,11 +2,11 @@
 #include "../include/def.h"
 
 #include <errno.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
-int append_the_value(int character, FILE *file, char *string, size_t string_size)
+void append_the_value(int character, FILE *file, char *string, size_t string_size)
 {
   while ((character = fgetc(file)) != '=' && character != '\n' && character != EOF) {}
 
@@ -19,8 +19,11 @@ int append_the_value(int character, FILE *file, char *string, size_t string_size
     if (position + 1 > string_size)
     {
       string_size *= 2;
-      string = realloc(string, string_size);
-      if (!string) return 1;
+      
+      char *tmp = realloc(string, string_size);
+      if (!string) return;
+      
+      string = tmp;
     }
     string[position] = character;
 
@@ -30,8 +33,11 @@ int append_the_value(int character, FILE *file, char *string, size_t string_size
 
   puts(string);
 
-  return 0;
+  return;
 }
+
+#define INTERVAL_SIZE 8
+#define DIRECTORY_SIZE 32
 
 struct config parse_config(const char *path)
 {
@@ -40,13 +46,13 @@ struct config parse_config(const char *path)
   FILE *file = fopen(path, "r");
   if (!file) goto exit;
 
-  char *interval_string = malloc(8);
-  char *directory = malloc(32);
+  char *interval_string = malloc(INTERVAL_SIZE);
+  char *directory = malloc(DIRECTORY_SIZE);
 
   if (!interval_string || !directory) goto exit;
 
-  size_t interval_size = 8;
-  size_t directory_size = 32;
+  size_t interval_size = INTERVAL_SIZE;
+  size_t directory_size = INTERVAL_SIZE;
   
   int character;
   int at_start = 1;
