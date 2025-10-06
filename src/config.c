@@ -21,7 +21,11 @@ void append_the_value(int character, FILE *file, char *string, size_t string_siz
       string_size *= 2;
       
       char *tmp = realloc(string, string_size);
-      if (!string) return;
+      if (!tmp)
+      {
+        free(string);
+        return;
+      }
       
       string = tmp;
     }
@@ -29,13 +33,10 @@ void append_the_value(int character, FILE *file, char *string, size_t string_siz
 
     position++;
   }
-  string[position + 1] = '\0';
+  string[position] = '\0';
  
   return;
 }
-
-#define INTERVAL_SIZE 8
-#define DIRECTORY_SIZE 32
 
 struct config parse_config(const char *path)
 {
@@ -51,15 +52,10 @@ struct config parse_config(const char *path)
 
   size_t interval_size = INTERVAL_SIZE;
   size_t directory_size = INTERVAL_SIZE;
-  
   int character;
-  int at_start = 1;
 
   while ((character = fgetc(file)) != EOF)
-  {
-    if (character == '\n') { at_start = 1; continue; };
-    if (!at_start) continue;
-    
+  { 
     switch (character) {
       case 'i':
         append_the_value(character, file, interval_string, interval_size);

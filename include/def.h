@@ -1,6 +1,10 @@
 static const char *version = "1.0";
 static const char *config_path_default = "/etc/dsort.conf";
 
+// Config parsing
+#define INTERVAL_SIZE 8
+#define DIRECTORY_SIZE 32
+
 #define ARR_LEN(a) (sizeof(a) / sizeof((a)[0]))
 
 enum FileTypes
