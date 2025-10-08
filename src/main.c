@@ -58,11 +58,19 @@ int main(int argc, char **argv)
 
     if (!cfg.directory || !cfg.interval)
     {
-      puts("Config is empty or invalid!");
+      magic_close(magic);
+
+      perror("  Config is empty or invalid!");
       return 1;
     }
   
-    return daemon(cfg, magic);
+    if (daemon(cfg, magic))
+    {
+      magic_close(magic);
+
+      perror("  Daemon failed");
+      return 1;
+    };
   }
 
   char *root;
@@ -71,7 +79,7 @@ int main(int argc, char **argv)
 
   if (!strcmp(root, ".")  || !strcmp(root, "..") || !strcmp(root, "/"))
   {
-    printf("Are you sure that you want to sort this directory? [Y/n] ");
+    printf("  Are you sure that you want to sort this directory? [Y/n] ");
     fflush(stdout);
 
     int c = fgetc(stdin);
@@ -82,6 +90,7 @@ int main(int argc, char **argv)
       case 'y':
         break;
       default:
+        magic_close(magic);
         return 0;
     }
   }
@@ -96,6 +105,6 @@ int main(int argc, char **argv)
     return 0;
 
   version_msg:
-    printf(VERSION_MESSAGE, version);
+    printf(VERSION_MESSAGE, version, MAGIC_VERSION / 100, MAGIC_VERSION % 100);
     return 0;
 }

@@ -99,16 +99,18 @@ static const char *HELP_MESSAGE =
 
 static const char *VERSION_MESSAGE =
 "Dsort %s\n"
-"Copyright (C) 2025 KirillkoTankisto.\n"
-"License GPLv3: https://www.gnu.org/licenses/gpl-3.0.html\n"
+"Magic version: %d.%02d\n"
+"Copyright (C) 2025 KirillkoTankisto (https://github.com/KirillkoTankisto).\n"
+"License GPLv3: (https://www.gnu.org/licenses/gpl-3.0.html).\n"
 "This is free software: you are free to change and redistribute it.\n"
 ;
 
 // Magic //
+
 static const char *MAGIC_DIRS[] =
 {
-  "/usr/share/file/misc/magic.mgc",   // Arch Linux
-  "/usr/share/misc/magic.mgc",    // Alpine Linux
+  "/usr/share/file/misc/magic.mgc",   // tested on Arch Linux
+  "/usr/share/misc/magic.mgc",    // tested on Alpine Linux
 };
 
 static const unsigned int MAGIC_LEN = ARR_LEN(MAGIC_DIRS);
