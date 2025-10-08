@@ -1,4 +1,5 @@
-#include "../include/lib.h"
+#include "../include/mime.h"
+#include "../include/utils.h"
 
 #include <libgen.h>
 #include <stdio.h>

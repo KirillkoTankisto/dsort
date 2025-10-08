@@ -1,6 +1,6 @@
 #include "../include/config.h"
 #include "../include/daemon.h"
-#include "../include/lib.h"
+#include "../include/def.h"
 #include "../include/sort.h"
 
 #include <getopt.h>
@@ -10,7 +10,7 @@
 
 void help(void)
 {
-  puts(help_message);
+  puts(HELP_MESSAGE);
   return;
 }
 
@@ -20,7 +20,7 @@ int main(int argc, char **argv)
   int daemon_mode = 0;
   char *config_path;
 
-  while ((c = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1)
+  while ((c = getopt_long(argc, argv, SHORTOPTS, longopts, NULL)) != -1)
   {
     // Note: gotos are on the bottom
     switch (c)
@@ -40,7 +40,8 @@ int main(int argc, char **argv)
     }
   }
   
-  if (daemon_mode) {
+  if (daemon_mode)
+  {
     struct config cfg;
 
     if (config_path) cfg = parse_config(config_path);
@@ -51,7 +52,7 @@ int main(int argc, char **argv)
       puts("Config is empty or invalid!");
       return 1;
     }
-    
+  
     return daemon(cfg);
   }
 
@@ -59,13 +60,15 @@ int main(int argc, char **argv)
 
   if (optind < argc) root = argv[optind++]; else root = ".";
 
-  if (!strcmp(root, ".")  || !strcmp(root, "..") || !strcmp(root, "/")) {
+  if (!strcmp(root, ".")  || !strcmp(root, "..") || !strcmp(root, "/"))
+  {
     printf("Are you sure that you want to sort this directory? [Y/n] ");
     fflush(stdout);
 
     int c = fgetc(stdin);
 
-    switch (c) {
+    switch (c)
+    {
       case 'Y':
       case 'y':
         break;
@@ -77,10 +80,10 @@ int main(int argc, char **argv)
   return sort_dir(root);
 
   help_msg:
-    puts(help_message);
+    puts(HELP_MESSAGE);
     return 0;
 
   version_msg:
-    printf(version_message, version);
+    printf(VERSION_MESSAGE, version);
     return 0;
 }
