@@ -1,5 +1,9 @@
 #include "../include/def.h"
 
-enum FileTypes detect_filetype(const char *mime);
+#include <magic.h>
 
-const char *get_mimetype(const char *filepath);
+magic_t prepare_magic(void);
+
+const char *get_mimetype(const char *filepath, magic_t magic);
+
+enum FileTypes detect_filetype(const char *mime);

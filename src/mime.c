@@ -6,6 +6,36 @@
 #include <stdio.h>
 #include <string.h>
 
+int try_load(magic_t magic, const char *magic_dirs[], size_t length)
+{
+  for (size_t i = 0; i < length; i++)
+  {
+    if (magic_load(magic, magic_dirs[i]) == 0) return 0;
+  }
+
+  return 1;
+}
+
+magic_t prepare_magic(void)
+{
+  magic_t magic = magic_open(MAGIC_MIME_TYPE | MAGIC_ERROR);
+
+  if (try_load(magic, MAGIC_DIRS, MAGIC_LEN)) return NULL;
+
+  return magic;
+}
+
+const char *get_mimetype(const char *filepath, magic_t magic)
+{
+  const char *type = magic_file(magic, filepath);
+
+  if (!type) return NULL;
+
+  char *out = strdup(type);
+
+  return out;
+}
+
 enum FileTypes detect_filetype(const char *mime)
 {
   if (!mime) return Unknown;
@@ -26,36 +56,4 @@ enum FileTypes detect_filetype(const char *mime)
   }
 
   return Unknown;
-}
-
-int try_load(magic_t magic, const char *magic_dirs[], size_t length)
-{
-    for (size_t i = 0; i < length; i++)
-    {
-        if (magic_load(magic, magic_dirs[i]) == 0) return 0;
-    }
-    return 1;
-}
-
-const char *get_mimetype(const char *filepath)
-{
-  magic_t magic = magic_open(MAGIC_MIME_TYPE | MAGIC_ERROR);
-  if (try_load(magic, MAGIC_DIRS, MAGIC_LEN))
-  {
-    perror("  Failed to load magic file");
-    return NULL;
-  }
-  const char *type = magic_file(magic, filepath);
-
-  if (!type) return NULL;
-
-  char *out = strdup(type);
-
-  /* magic_t must be closed right after
-    duping the string because *type
-    is owned by the magic_t o_o
-  */
-  magic_close(magic);
-
-  return out;
 }

@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-int sort_dir(const char *root) 
+int sort_dir(const char *root, magic_t magic) 
 {
   char **files = read_dir(root);
 
@@ -29,7 +29,7 @@ int sort_dir(const char *root)
       continue;
     }
 
-    const char *mime = get_mimetype(path);
+    const char *mime = get_mimetype(path, magic);
     enum FileTypes type = detect_filetype(mime);
 
     const char *dest_dir = get_abs_path(root, SUBDIRS[type]);

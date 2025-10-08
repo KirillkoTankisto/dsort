@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <time.h>
 
-int daemon(struct config cfg)
+int daemon(struct config cfg, magic_t magic)
 {
 
   puts("  Starting daemon...");
@@ -13,7 +13,7 @@ int daemon(struct config cfg)
 
   while (1)
   {
-    if (sort_dir(cfg.directory)) return 1;
+    if (sort_dir(cfg.directory, magic)) return 1;
     nanosleep(&interval, NULL);
   }
   

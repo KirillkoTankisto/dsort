@@ -1,10 +1,11 @@
 #include "../include/config.h"
 #include "../include/daemon.h"
-#include "../include/def.h"
+#include "../include/mime.h"
 #include "../include/sort.h"
 
 #include <getopt.h>
 #include <libgen.h>
+#include <magic.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -39,7 +40,15 @@ int main(int argc, char **argv)
         break;
     }
   }
-  
+
+  magic_t magic = prepare_magic();
+
+  if (!magic)
+  {
+    perror("  Could not open magic file");
+    return 1;
+  }
+
   if (daemon_mode)
   {
     struct config cfg;
@@ -53,7 +62,7 @@ int main(int argc, char **argv)
       return 1;
     }
   
-    return daemon(cfg);
+    return daemon(cfg, magic);
   }
 
   char *root;
@@ -77,7 +86,10 @@ int main(int argc, char **argv)
     }
   }
 
-  return sort_dir(root);
+  sort_dir(root, magic);
+
+  magic_close(magic);
+  return 0;
 
   help_msg:
     puts(HELP_MESSAGE);
