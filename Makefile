@@ -7,6 +7,7 @@ INCLUDE = -Iinclude $(shell pkg-config --static --cflags libmagic)
 OUT_DIR = out
 SRC_DIR = src
 BIN_DIR = bin
+INS_DIR = /usr/local/bin/
 
 COMPILE = $(CC) $(CFLAGS) $(INCLUDE) $(LDFLAGS) $(LDLIBS)
 STRIP = llvm-strip --strip-all -R .comment -R .note.gnu.build-id
@@ -29,3 +30,8 @@ $(OUT_DIR)/dsort: $(SRC_DIR)/*.c
 	$(STRIP) $@
 	$C
 	$(GETSIZE) $@
+
+install: $(OUT_DIR)/dsort
+	mkdir -p $(INS_DIR)
+	install $^ $(INS_DIR)
+	
