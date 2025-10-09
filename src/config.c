@@ -51,7 +51,7 @@ struct config parse_config(const char *path)
   if (!interval_string || !directory) goto exit;
 
   size_t interval_size = INTERVAL_SIZE;
-  size_t directory_size = INTERVAL_SIZE;
+  size_t directory_size = DIRECTORY_SIZE;
   int character;
 
   while ((character = fgetc(file)) != EOF)
