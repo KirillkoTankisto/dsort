@@ -93,6 +93,8 @@ static const char *HELP_MESSAGE =
 "Mandatory arguments to long options are mandatory for short options too.\n"
 "  -h, --help        display this help and exit\n"
 "  -v, --version     output version information and exit\n"
+"  -c, --config FILE select configuration file\n"
+"  -d, --daemon      enter daemon mode\n"
 "\n"
 "Dsort's homepage: https://github.com/KirillkoTankisto/dsort"
 ;
