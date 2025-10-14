@@ -20,14 +20,9 @@ int sort_dir(const char *root, magic_t magic)
   {
     if (!is_file(path)) continue;
 
-    char *tmp = strdup(path);
-    char *name = basename(tmp);
+    char *name = basename(path);
 
-    if (!strcmp(name, ".") || !(strcmp(name, "..")))
-    {
-      free(tmp);
-      continue;
-    }
+    if (!strcmp(name, ".") || !(strcmp(name, ".."))) continue;
 
     const char *mime = get_mimetype(path, magic);
     enum FileTypes type = detect_filetype(mime);
@@ -36,8 +31,7 @@ int sort_dir(const char *root, magic_t magic)
     const char *dest = get_abs_path(dest_dir, name);
 
     rename(path, dest);
-
-    free(tmp);
+    
     free((void*)mime);
     free((void*)dest_dir);
     free((void*)dest);
