@@ -1,10 +1,8 @@
 #include "../include/config.h"
-#include "../include/def.h"
 
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 
 void append_the_value(int character, FILE *file, char *string, size_t string_size)
 {
@@ -37,6 +35,10 @@ void append_the_value(int character, FILE *file, char *string, size_t string_siz
  
   return;
 }
+
+// Config parsing //
+#define INTERVAL_SIZE 8
+#define DIRECTORY_SIZE 32
 
 struct config parse_config(const char *path)
 {

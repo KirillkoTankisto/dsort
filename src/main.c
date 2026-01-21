@@ -9,6 +9,42 @@
 #include <stdio.h>
 #include <string.h>
 
+// Arguments //
+
+static const struct option longopts[] =
+{
+  { "help", no_argument, 0, 'h' },
+  { "version", no_argument, 0, 'v' },
+  { "daemon", no_argument, 0, 'd' },
+  { "config", required_argument, 0, 'c' },
+  { 0, 0, 0, 0 }
+};
+
+static const char *SHORTOPTS = "hvdc:";
+
+static const char *HELP_MESSAGE =
+"Usage: dsort OPTION... [DIR]\n"
+"Sort selected directory.\n"
+"\n"
+"When no DIR, or when DIR is '.', sorts the current directory.\n"
+"\n"
+"Mandatory arguments to long options are mandatory for short options too.\n"
+"  -h, --help        display this help and exit\n"
+"  -v, --version     output version information and exit\n"
+"  -c, --config FILE select configuration file\n"
+"  -d, --daemon      enter daemon mode\n"
+"\n"
+"Dsort's homepage: https://github.com/KirillkoTankisto/dsort"
+;
+
+static const char *VERSION_MESSAGE =
+"Dsort %s\n"
+"Magic version: %d.%02d\n"
+"Copyright (C) 2025 KirillkoTankisto (https://github.com/KirillkoTankisto).\n"
+"License GPLv3: (https://www.gnu.org/licenses/gpl-3.0.html).\n"
+"This is free software: you are free to change and redistribute it.\n"
+;
+
 void help(void)
 {
   puts(HELP_MESSAGE);
@@ -45,7 +81,7 @@ int main(int argc, char **argv)
 
   if (!magic)
   {
-    perror("  Could not open magic file");
+    puts("  Could not open magic file");
     return 1;
   }
 
@@ -54,13 +90,13 @@ int main(int argc, char **argv)
     struct config cfg;
 
     if (config_path) cfg = parse_config(config_path);
-    else cfg = parse_config(config_path_default);
+    else cfg = parse_config(CONFIG_PATH);
 
     if (!cfg.directory || !cfg.interval)
     {
       magic_close(magic);
 
-      perror("  Config is empty or invalid!");
+      puts("  Config is empty or invalid!");
       return 1;
     }
   
@@ -68,7 +104,7 @@ int main(int argc, char **argv)
     {
       magic_close(magic);
 
-      perror("  Daemon failed");
+      puts("  Daemon failed");
       return 1;
     };
   }
@@ -79,7 +115,7 @@ int main(int argc, char **argv)
 
   if (!strcmp(root, ".")  || !strcmp(root, "..") || !strcmp(root, "/"))
   {
-    printf("  Are you sure that you want to sort this directory? [Y/n] ");
+    printf("  Are you sure that you want to sort this directory? [y/N] ");
     fflush(stdout);
 
     int c = fgetc(stdin);
@@ -105,6 +141,6 @@ int main(int argc, char **argv)
     return 0;
 
   version_msg:
-    printf(VERSION_MESSAGE, version, MAGIC_VERSION / 100, MAGIC_VERSION % 100);
+    printf(VERSION_MESSAGE, VERSION, MAGIC_VERSION / 100, MAGIC_VERSION % 100);
     return 0;
 }

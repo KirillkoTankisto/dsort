@@ -1,10 +1,18 @@
-#include "../include/def.h"
+#include "../include/mime.h"
 #include "../include/utils.h"
 
 #include <magic.h>
-#include <stddef.h>
-#include <stdio.h>
 #include <string.h>
+
+// Magic //
+
+static const char *MAGIC_DIRS[] =
+{
+  "/usr/share/file/misc/magic.mgc",   // tested on Arch Linux
+  "/usr/share/misc/magic.mgc",    // tested on Alpine Linux
+};
+
+static const unsigned int MAGIC_LEN = ARR_LEN(MAGIC_DIRS);
 
 int try_load(magic_t magic, const char *magic_dirs[], size_t length)
 {
